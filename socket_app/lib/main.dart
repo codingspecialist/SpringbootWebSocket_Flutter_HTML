@@ -13,6 +13,9 @@ final stompClient = StompClient(
   // -> http://주소/ws 방식 ex) http://192.168.0.5:8080/ws
   config: StompConfig.SockJS(
     url: 'http://192.168.0.5:8080/ws',
+    webSocketConnectHeaders: {
+      "transports": ["websocket"]
+    },
     onConnect: onConnect,
     beforeConnect: () async {
       print('waiting to connect...');
@@ -31,17 +34,16 @@ void onConnect(StompFrame frame) {
     destination: '/topic/public',
     headers: {},
     callback: (frame) {
+      print("구독완료");
       //List<dynamic>? result = json.decode(frame.body!);
       print(frame.body!);
     },
   );
 
-  Timer.periodic(Duration(seconds: 10), (_) {
-    stompClient.send(
-        destination: '/app/chat.addUser',
-        body: json.encode({"sender": "ssar", "type": "JOIN"}),
-        headers: {});
-  });
+  stompClient.send(
+      destination: '/app/chat.addUser',
+      body: json.encode({"sender": "ssar", "type": "JOIN"}),
+      headers: {});
 }
 
 void main() {
@@ -72,7 +74,22 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("Hello World"),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Hello World"),
+            ElevatedButton(
+              onPressed: () {
+                stompClient.send(
+                    destination: '/app/chat.sendMessage',
+                    body: json.encode(
+                        {"sender": "ssar", "content": "반가워", "type": "CHAT"}),
+                    headers: {});
+              },
+              child: Text("메시지 전송"),
+            ),
+          ],
+        ),
       ),
     );
   }
