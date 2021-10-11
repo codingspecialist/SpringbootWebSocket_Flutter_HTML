@@ -6,3 +6,6 @@
 
 - Upgrade 헤더란?
 https://tecoble.techcourse.co.kr/post/2020-09-20-websocket/
+
+- WebSocket 이란? SocketJs란?
+https://velog.io/@koseungbin/WebSocket
